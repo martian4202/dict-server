@@ -1,0 +1,6 @@
+dict:
+  mdx_file: E:\\dict\\OALD9EnEn.mdx
+  css_file: E:\\dict\\style.css
+http:
+  port: 8080
+  host: localhost
