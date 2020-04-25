@@ -2,7 +2,7 @@ import mdict_query
 from typing import (
     List
 )
-from debug import Debugger
+from debug import debugger
 
 class MDict():
     def __init__(self, mdx_file: str=None, css_file: str=None)-> None:
@@ -10,7 +10,7 @@ class MDict():
            self._css_file = css.read()
         self._builder = mdict_query.IndexBuilder(mdx_file)
 
-    @Debugger
+    @debugger
     async def lookup(self, word: str) -> List[str]:
         keys = self._builder.mdx_lookup(word)
         ret = []
