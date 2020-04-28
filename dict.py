@@ -5,6 +5,7 @@ from typing import (
 from debug import debugger
 import re, logging, requests
 from online import process_html
+import asyncio
 
 KT = TypeVar('KT') 
 VT = TypeVar('VT')
@@ -27,8 +28,8 @@ class OLDict():
             response.raise_for_status()
         except requests.exceptions.HTTPError as http_err:
             logging.error(http_err)
-        finally:
             return ret
+        
         ret.append(process_html(response.text))
         return ret
 
@@ -62,10 +63,10 @@ class MDict():
 
 
 if __name__ == "__main__":
-    def func(d: Dictionary):
-        print(d.lookup("word"))
+    async def func(d: Dictionary):
+        print(await d.lookup("by the way"))
 
-    func(OLDict('sss'))
+    asyncio.run(func(OLDict()))
     # word_file = open('word.txt', 'r')
     # css_style = ''
     # with open('style.css', 'r') as css_file:
