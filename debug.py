@@ -9,6 +9,7 @@ def debugger(func):
     def wrapper_func(*args, **kwargs):
         logging.debug(f'Entering: {func.__name__}')
         logging.debug(f'args, kwargs: {args, kwargs}')
-        logging.debug(f'{func.__name__} returned: {func(*args, **kwargs)}')
-        return func(*args, **kwargs)
+        value = func(*args, **kwargs)
+        logging.debug(f'{func.__name__} returned: {value}')
+        return value
     return wrapper_func
