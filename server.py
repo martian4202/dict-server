@@ -23,7 +23,7 @@ async def init_dict(app)->None:
     app['dicts'] = []
     dicts: List[dict.Dictionary] = app['dicts']
     dicts.append(mdict)
-    dicts.append(dict.OLDict())
+    dicts.append(dict.MerriamWebsterDict(), dict.OLDict())
 
 app = web.Application()
 setup_routes(app)

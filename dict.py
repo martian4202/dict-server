@@ -3,9 +3,9 @@ from typing import (
     List, TypeVar, Generic
 )
 from debug import debugger
-import re, logging, requests
-from online import process_html
-import asyncio
+import re, logging, requests, asyncio
+from online import process
+from bs4 import Tag, BeautifulSoup, NavigableString
 
 KT = TypeVar('KT') 
 VT = TypeVar('VT')
@@ -19,20 +19,33 @@ Dictionary = IDictionary[str, List[str]]
 class OLDict():
     def __init__(self):
         pass
-    async def lookup(self, word: str) -> List[str]:
+
+    def process_oldict(self, soup: BeautifulSoup) -> List[Tag]:
         ret = []
-        url = 'https://www.dictionary.com/browse/{word}?s=t' 
-        url = url.format(word=word)
-        response = requests.get(url)
-        try:
-            response.raise_for_status()
-        except requests.exceptions.HTTPError as http_err:
-            logging.error(http_err)
-            return ret
-        
-        ret.append(process_html(response.text))
+        ret.extend(soup.find_all(class_='css-1urpfgu', limit=2))
+        style = soup.find('style')
+        ret.append(style)
         return ret
 
+    async def lookup(self, word: str) -> List[str]:
+        url = 'https://www.dictionary.com/browse/{word}?s=t' 
+        return lookup(word, url, self.process_oldict)
+
+def lookup(word: str, url_pattern: str, handler) -> List[str]:
+    url = url_pattern.format(word=word)
+    ret = []
+    response = requests.get(url)
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as http_err:
+        logging.error(http_err)
+        return ret
+    try:
+        ret.append(process(response.text, handler))
+    except Exception as e:
+        logging.error(e)
+        return []
+    return ret
 
 class MDict():
     def __init__(self, mdx_file: str=None, css_file: str=None)-> None:
@@ -61,12 +74,45 @@ class MDict():
     def __build_content(self, key: str)->str:
         return '<html>' + self._css_file + key.strip('\n\r') + '</html>'
 
+class MerriamWebsterDict():
+    def __init__(self):
+        pass
+    async def lookup(self, word: str)-> List[str]:
+        url = "http://www.merriam-webster.com/dictionary/{word}"
+        return lookup(word, url, self.__process_reponse__)
+        
+    def __process_reponse__(self, soup: BeautifulSoup)->List[Tag]:
+        ret = []
+        tag = soup.find(class_="row")
+        right = tag.find(class_=re.compile(r'right.*'))
+        if right != None:
+            right.decompose()
+        wgt = tag.find(class_="wgt-incentive-anchors")
+        delete_tags = []
+        if (wgt):
+            for t in wgt.next_siblings:
+                delete_tags.append(t)
+            [t.extract() for t in delete_tags]
+            wgt.decompose()
+        cs = soup.find(href=re.compile(r'style.*definitions[^-]*.css$'))
+        text = requests.get(cs['href']).text
+        style = soup.new_tag('style')
+        style.string = text
+        ret.append(style)
+        ret.append(tag)
+        return ret
+
 
 if __name__ == "__main__":
     async def func(d: Dictionary):
-        print(await d.lookup("by the way"))
+       ret = await d.lookup("top")
+       with open('output.html', 'w+', encoding='utf8') as f:
+           if len(ret) == 0:
+               print("not found")
+               return
+           f.write(ret[0])
 
-    asyncio.run(func(OLDict()))
+    asyncio.run(func((OLDict())))
     # word_file = open('word.txt', 'r')
     # css_style = ''
     # with open('style.css', 'r') as css_file:

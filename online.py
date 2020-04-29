@@ -1,7 +1,8 @@
-import json
+import json, re
 import requests
 from bs4 import Tag, BeautifulSoup
-from typing import List
+from typing import List, Callable
+from io import BytesIO
 
 app_id = ''
 app_key = ''
@@ -9,37 +10,41 @@ app_key = ''
 url = "https://od-api.oxforddictionaries.com/api/v2/words/EN-US"
 
 def embed_script(tag: Tag):
-    if tag.name == "script":
+    if tag.name == "script" or tag.name == "meta":
         return True
     return False
 
-def extendable(tag: Tag):
-    if tag.has_attr('class'):
-        return 'expandable' in tag['class']
-    return False
 
-def process_html(html_str: str) -> str:
-    soup: BeautifulSoup = None
-    soup = BeautifulSoup(html_str, 'html.parser')
+def process(html_str: str, handle_soup: Callable[[BeautifulSoup], List[Tag]]):
+    soup = BeautifulSoup(html_str, 'html5lib')
+    head = soup.find('head')
+    body = soup.find('body')
+
+    filterd = handle_soup(soup)
+    head.clear()
+    body.clear()
+    for tag in filterd:
+        if tag.name == 'style':
+            head.append(tag)
+        else:
+            body.append(tag)
+    response = requests.post('https://purifycss.online/api/purify', data={
+        'htmlCode': str(body),
+        'cssCode': str(head)
+    })
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        raise err
     
-    results: List[Tag] = soup.find_all(embed_script)
-    for r in results:
-        r.decompose()
+    d = json.load(BytesIO(response.content))
+    head.clear()
+    style = soup.new_tag('style')
+    style.string = d['purified']['content']
+    head.append(style)
+    [r.decompose() for r in soup.find_all(embed_script)]
 
-    top_definition_tag: Tag = soup.find(id='top-definitions-section')
-    div = top_definition_tag.parent
-    if (div == None):
-        div: Tag = soup.find(extendable)
-    ecs: List[Tag] = div.find_all(class_='expandable-control')
-    for ec in ecs:
-        ec.decompose()
-    root: Tag = soup.find(id='root')
-    for c in root.children:
-        print(c.name, type(c))
-    root.div.replace_with(div)
-    return str(soup)
-
-
+    return str(soup).replace('\r\n', '').replace('\r', '').replace('\n', '')
 
 if __name__ == "__main__":
-    process_html('E:/projects/dictserver/test.html')
+    pass
