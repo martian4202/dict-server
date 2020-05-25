@@ -44,7 +44,7 @@ def process(html_str: str, handle_soup: Callable[[BeautifulSoup], List[Tag]]):
     head.append(style)
     [r.decompose() for r in soup.find_all(embed_script)]
 
-    return str(soup).replace('\r\n', '').replace('\r', '').replace('\n', '')
+    return str(soup).replace('\r\n', '').replace('\r', '').replace('\n', '').replace('\t', '')
 
 if __name__ == "__main__":
     pass
