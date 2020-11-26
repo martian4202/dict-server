@@ -1,6 +1,6 @@
 dict:
-  mdx_file: E:\\dict\\OALD9EnEn.mdx
-  css_file: E:\\dict\\style.css
+  mdx_file: /Users/char/projects/mdictdata/OALD9EnEn.mdx
+  css_file: ./style.css
 http:
   port: 8080
   host: localhost

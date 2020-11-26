@@ -72,7 +72,7 @@ class MDict():
         return key
         
     def __build_content(self, key: str)->str:
-        return '<html>' + self._css_file + key.strip('\n\r') + '</html>'
+        return '<html>' + self._css_file + key.replace('\n\r', '').replace('\t', '').replace('\n', '').replace('\r', '') + '</html>'
 
 class MerriamWebsterDict():
     def __init__(self):
