@@ -1,5 +1,5 @@
 dict:
-  mdx_file: /Users/char/projects/mdictdata/OALD9EnEn.mdx
+  mdx_file: /mnt/e/dict/OALD9EnEn.mdx
   css_file: ./style.css
 http:
   port: 8080
