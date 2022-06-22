@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('--server', default='127.0.0.1:8080')
     parser.add_argument('--output', default='D:/tmp.txt')
     ns = parser.parse_args()
-    pattern = r'.*<(?P<word>.*)>.*'
+    pattern = r'<(?P<word>[\w ]+)>'
     output = open(ns.output, 'w+', encoding='utf-8')
     for path, dirs, files in os.walk(ns.dir):
         for filename in files:
@@ -33,12 +33,16 @@ if __name__ == '__main__':
                         line = line.strip('\r').strip('\n').strip()
                         if not line:
                             continue
-                        mg = re.match(pattern, line)
-                        if mg is None:
+                        matched = re.findall(pattern, line)
+                        if not matched:
                             continue
-                        word = mg.group('word')
+                        word = None
+                        for m in matched:
+                            if m != 'br':
+                                word = m
+                                break
                         explanation = query_word(word, ns.server)
-                        context = line.replace('<', '').replace('>', '')
+                        context = line.replace(f'<{word}>', word)
                         output.write(f'{word}\t{context}\t{explanation}\n')
             print(f'process file {filename} done!')
         break
