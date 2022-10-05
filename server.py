@@ -1,12 +1,12 @@
 from aiohttp import web
 from settings import config
 import sys, traceback
-import dict
+import mdict
 from typing import List
 
 
-async def index(request: web.Request) -> web.StreamResponse:
-    dicts: List[dict.Dictionary] = request.app['dicts']
+async def search_dict(request: web.Request) -> web.StreamResponse:
+    dicts: List[mdict.Dict] = request.app['dicts']
     word: str = request.query['word']
     output: List[str] = []
     for d in dicts:
@@ -17,17 +17,17 @@ async def index(request: web.Request) -> web.StreamResponse:
 
 
 def setup_routes(app) -> None:
-    app.router.add_get('/', index)
+    app.router.add_get('/', search_dict)
 
 
 async def init_dict(app) -> None:
-    config = app['config']['dict']
-    mdict = dict.MDict(config['mdx_file'], config['css_file'])
-    app['dicts'] = []
-    dicts: List[dict.Dictionary] = app['dicts']
-    dicts.append(mdict)
-    dicts.extend([dict.MerriamWebsterDict(), dict.OLDict()])
-
+    configs = app['config']['dict']
+    dicts: List[mdict.Dict] = []
+    for name in ('oald', 'phrasal_verb', 'idiom'):
+        c = configs.get(name)
+        md = mdict.Dict(mdx=c.get('mdx'), style=c.get('css'))
+        dicts.append(md)
+    app['dicts'] = dicts
 
 if __name__ == '__main__':
     app = web.Application()

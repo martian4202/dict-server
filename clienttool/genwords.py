@@ -24,6 +24,7 @@ if __name__ == '__main__':
     ns = parser.parse_args()
     pattern = r'<(?P<word>[\w ]+)>'
     output = open(ns.output, 'w+', encoding='utf-8')
+    manual_output = open(f'{ns.output}.manual', 'w+', encoding='utf-8')
     for path, dirs, files in os.walk(ns.dir):
         for filename in files:
             if filename.endswith('.nl'):
@@ -42,8 +43,11 @@ if __name__ == '__main__':
                                 word = m
                                 break
                         explanation = query_word(word, ns.server)
-                        context = line.replace(f'<{word}>', word)
-                        output.write(f'{word}\t{context}\t{explanation}\n')
+                        if explanation == 'can not find definitions':
+                            manual_output.write(f'{word}\n')
+                        else:
+                            context = line.replace(f'<{word}>', word)
+                            output.write(f'{word}\t{context}\t{explanation}\n')
             print(f'process file {filename} done!')
         break
 

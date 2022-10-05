@@ -1,6 +1,13 @@
 dict:
-  mdx_file: /mnt/e/dict/OALD9EnEn.mdx
-  css_file: ./style.css
+  oald:
+    mdx: E:/dict/OALD9EnEn.mdx
+    css: E:/dict/oald.css
+  idiom:
+    mdx: E:/dict/Idioms.mdx
+    css: E:/dict/Idioms.css
+  phrasal_verb:
+    mdx: E:/dict/PhrasalVerbs.mdx
+    css: E:/dict/PhrasalVerbs.css
 http:
   port: 8080
   host: localhost
