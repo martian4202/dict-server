@@ -23,8 +23,7 @@ def setup_routes(app) -> None:
 async def init_dict(app) -> None:
     configs = app['config']['dict']
     dicts: List[mdict.Dict] = []
-    for name in ('oald', 'phrasal_verb', 'idiom'):
-        c = configs.get(name)
+    for c in configs.values():
         md = mdict.Dict(mdx=c.get('mdx'), style=c.get('css'))
         dicts.append(md)
     app['dicts'] = dicts

@@ -1,13 +1,19 @@
 dict:
   oald:
-    mdx: E:/dict/OALD9EnEn.mdx
-    css: E:/dict/oald.css
+    mdx: /mnt/e/dict/OALD9EnEn.mdx
+    css: /mnt/e/dict/oald.css
+  ode:
+    mdx: /mnt/e/dict/oxford_dictionary_of_english.mdx
+    css: /mnt/e/dict/oxford_dictionary_of_english.css
+  macmillan:
+    mdx: /mnt/e/dict/MacmillanEnEn.mdx
+    css: /mnt/e/dict/MacmillanEnEn.css
   idiom:
-    mdx: E:/dict/Idioms.mdx
-    css: E:/dict/Idioms.css
+    mdx: /mnt/e/dict/Idioms.mdx
+    css: /mnt/e/dict/Idioms.css
   phrasal_verb:
-    mdx: E:/dict/PhrasalVerbs.mdx
-    css: E:/dict/PhrasalVerbs.css
+    mdx: /mnt/e/dict/PhrasalVerbs.mdx
+    css: /mnt/e/dict/PhrasalVerbs.css
 http:
   port: 8080
   host: localhost
