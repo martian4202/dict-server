@@ -43,11 +43,12 @@ if __name__ == '__main__':
                                 word = m
                                 break
                         explanation = query_word(word, ns.server)
+                        splits = explanation.split('\n', 1)
                         if explanation == 'can not find definitions':
                             manual_output.write(f'{word}\n')
                         else:
                             context = line.replace(f'<{word}>', word)
-                            output.write(f'{word}\t{context}\t{explanation}\n')
+                            output.write(f'{word}\t{splits[-1]}\t{splits[0]}\n')
             print(f'process file {filename} done!')
         break
 

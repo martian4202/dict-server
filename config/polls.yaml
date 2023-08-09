@@ -8,12 +8,20 @@ dict:
   macmillan:
     mdx: /mnt/e/dict/MacmillanEnEn.mdx
     css: /mnt/e/dict/MacmillanEnEn.css
-  idiom:
-    mdx: /mnt/e/dict/Idioms.mdx
-    css: /mnt/e/dict/Idioms.css
-  phrasal_verb:
-    mdx: /mnt/e/dict/PhrasalVerbs.mdx
-    css: /mnt/e/dict/PhrasalVerbs.css
+#  idiom:
+#    mdx: /mnt/e/dict/Idioms.mdx
+#    css: /mnt/e/dict/Idioms.css
+#  phrasal_verb:
+#    mdx: /mnt/e/dict/PhrasalVerbs.mdx
+#    css: /mnt/e/dict/PhrasalVerbs.css
+  # oalecd:
+  #   mdx: /home/xmac/dict/oalecd.mdx
+  #   css: /home/xmac/dict/oalecd.css
+
+cn_dict:
+  mdx: /home/xmac/dict/oalecd.mdx
+  css: /home/xmac/dict/oalecd.css
+
 http:
   port: 8080
   host: localhost
